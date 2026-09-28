@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Dashboard Items"
+  short_description: "List open items from four GitHub dashboards"
+  default_prompt: "Use $github-dashboard-items to list my open authored and assigned pull requests and created and assigned issues, matching the four GitHub dashboards and omitting status columns."
