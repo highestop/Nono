@@ -8,7 +8,7 @@
 | [dota2-liquipedia-ti-live-reporter](skills/dota2-liquipedia-ti-live-reporter/SKILL.md) | Report the currently active Dota 2 The International (TI) from Liquipedia with stage-specific standings, results, and upcoming matches. Use for current TI status, Group Stage standings, Main Event results, or the next TI schedule; do not use for other tournaments or inactive TI editions. |
 | [dota2-replay-manager](skills/dota2-replay-manager/SKILL.md) | Inspect and safely manage locally downloaded Dota 2 replay files on macOS. Use for locating `.dem` files, listing file and match metadata, identifying tournament replays, reading local replay titles, or changing an existing local replay title with a backup. |
 | [dota2-steam-market-price-reporter](skills/dota2-steam-market-price-reporter/SKILL.md) | Query public Steam Community Market listings and report current lowest prices with optional volume-weighted historical medians in a compact table. Use for one or more exact market items, including Dota 2 cosmetics and RMB comparisons; do not use for private inventories, purchases, or claims about exact individual-sale minima. |
-| [download-video](skills/download-video/SKILL.md) | 使用 yt-dlp 下载视频/音频，支持解析地址、选择画质、自动合并音视频。适用于 YouTube、B 站、Twitter/X 等主流平台。 |
+| [download-video](skills/download-video/SKILL.md) | Download video or audio with yt-dlp, including URL resolution, quality selection, and automatic audio/video merging. Use for YouTube, Bilibili, Twitter/X, and other major platforms. |
 | [github-dashboard-items](skills/github-dashboard-items/SKILL.md) | List the authenticated user's open authored and assigned pull requests and created and assigned issues, matching GitHub's four personal dashboards. Use for a grouped personal GitHub work list or requests referencing those dashboard URLs. |
 | [mweb-db-exporter](skills/mweb-db-exporter/SKILL.md) | Export all tables from an MWeb mainlib.db SQLite database as JSON with schema and record summaries. Use for MWeb data analysis, backup, migration, integration, or integrity debugging; operate read-only and do not use for non-MWeb databases or requests that require export files. |
 | [mweb-media-reference-checker](skills/mweb-media-reference-checker/SKILL.md) | Audit an MWeb document library for missing media references and unreferenced media files, then guide user-approved cleanup. Use for integrity checks, routine maintenance, or post-migration cleanup; do not modify documents or delete files without explicit confirmation. |
@@ -16,4 +16,4 @@
 
 ---
 
-*This document was automatically generated based on commit [`390bae567ec9af5a5587f4a4eeaaff03b569e60e`](https://github.com/highestop/nono/commit/390bae567ec9af5a5587f4a4eeaaff03b569e60e).*
+*This document was automatically generated based on commit [`0ba8c474ab18e5655341daa0c5b4cd1f844371bc`](https://github.com/highestop/nono/commit/0ba8c474ab18e5655341daa0c5b4cd1f844371bc).*
