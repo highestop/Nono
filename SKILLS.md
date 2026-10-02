@@ -4,7 +4,7 @@
 |------|------|
 | [code-committer](skills/code-committer/SKILL.md) | Manage GitHub code changes from environment checks through conventional commits, push, pull-request creation and tracking, check or review remediation, and user-confirmed merge. Use when asked to commit or push changes, create or track a PR, address PR feedback, or merge a ready PR; never commit directly to main or merge without confirmation. |
 | [compare-domain-prices](skills/compare-domain-prices/SKILL.md) | Compare watched domain names across Cloudflare Registrar, Dynadot, and Porkbun using current registration and renewal prices. Use for domain affordability rankings, registrar price comparisons, or updates to the domain watchlist; show colored annual prices and promotion or purchase-term notes without a three-year cost column. |
-| [design-app-icon](skills/design-app-icon/SKILL.md) | Find, customize, or create app icons from Lucide SVGs and deliver a macOS Retina and Liquid Glass download bundle. Use for icon or 图标 requests, defaulting to macOS app icons unless the user specifies another source, platform, or an inline UI icon. |
+| [design-app-icon](skills/design-app-icon/SKILL.md) | Find, customize, or create app icons from Lucide SVGs and deliver a macOS Retina and Liquid Glass download bundle. Use for icon requests, defaulting to macOS app icons unless the user specifies another source, platform, or an inline UI icon. |
 | [dota2-liquipedia-ti-live-reporter](skills/dota2-liquipedia-ti-live-reporter/SKILL.md) | Report the currently active Dota 2 The International (TI) from Liquipedia with stage-specific standings, results, and upcoming matches. Use for current TI status, Group Stage standings, Main Event results, or the next TI schedule; do not use for other tournaments or inactive TI editions. |
 | [dota2-replay-manager](skills/dota2-replay-manager/SKILL.md) | Inspect and safely manage locally downloaded Dota 2 replay files on macOS. Use for locating `.dem` files, listing file and match metadata, identifying tournament replays, reading local replay titles, or changing an existing local replay title with a backup. |
 | [dota2-steam-market-price-reporter](skills/dota2-steam-market-price-reporter/SKILL.md) | Query public Steam Community Market listings and report current lowest prices with optional volume-weighted historical medians in a compact table. Use for one or more exact market items, including Dota 2 cosmetics and RMB comparisons; do not use for private inventories, purchases, or claims about exact individual-sale minima. |
@@ -16,4 +16,4 @@
 
 ---
 
-*This document was automatically generated based on commit [`0ba8c474ab18e5655341daa0c5b4cd1f844371bc`](https://github.com/highestop/nono/commit/0ba8c474ab18e5655341daa0c5b4cd1f844371bc).*
+*This document was automatically generated based on commit [`dcfb4d1f67cb2e880c64e8deab44c90c8063dd29`](https://github.com/highestop/nono/commit/dcfb4d1f67cb2e880c64e8deab44c90c8063dd29).*
