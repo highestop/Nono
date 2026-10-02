@@ -1,6 +1,6 @@
 ---
 name: design-app-icon
-description: Find, customize, or create app icons from Lucide SVGs and deliver a macOS Retina and Liquid Glass download bundle. Use for icon or 图标 requests, defaulting to macOS app icons unless the user specifies another source, platform, or an inline UI icon.
+description: Find, customize, or create app icons from Lucide SVGs and deliver a macOS Retina and Liquid Glass download bundle. Use for icon requests, defaulting to macOS app icons unless the user specifies another source, platform, or an inline UI icon.
 ---
 
 # App Icon Designer
