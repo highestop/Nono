@@ -5,6 +5,7 @@
 | [code-committer](skills/code-committer/SKILL.md) | Manage GitHub code changes from environment checks through conventional commits, push, pull-request creation and tracking, check or review remediation, and user-confirmed merge. Use when asked to commit or push changes, create or track a PR, address PR feedback, or merge a ready PR; never commit directly to main or merge without confirmation. |
 | [compare-domain-prices](skills/compare-domain-prices/SKILL.md) | Compare watched domain names across Cloudflare Registrar, Dynadot, and Porkbun using current registration and renewal prices. Use for domain affordability rankings, registrar price comparisons, or updates to the domain watchlist; show colored annual prices and promotion or purchase-term notes without a three-year cost column. |
 | [design-app-icon](skills/design-app-icon/SKILL.md) | Find, customize, or create app icons from Lucide SVGs and deliver a macOS Retina and Liquid Glass download bundle. Use for icon or 图标 requests, defaulting to macOS app icons unless the user specifies another source, platform, or an inline UI icon. |
+| [dota2-replay-manager](skills/dota2-replay-manager/SKILL.md) | Inspect and safely manage locally downloaded Dota 2 replay files on macOS. Use for locating `.dem` files, listing file and match metadata, identifying tournament replays, reading local replay titles, or changing an existing local replay title with a backup. |
 | [download-video](skills/download-video/SKILL.md) | 使用 yt-dlp 下载视频/音频，支持解析地址、选择画质、自动合并音视频。适用于 YouTube、B 站、Twitter/X 等主流平台。 |
 | [github-dashboard-items](skills/github-dashboard-items/SKILL.md) | List the authenticated user's open authored and assigned pull requests and created and assigned issues, matching GitHub's four personal dashboards. Use for a grouped personal GitHub work list or requests referencing those dashboard URLs. |
 | [liquipedia-ti-live-reporter](skills/liquipedia-ti-live-reporter/SKILL.md) | Report the currently active Dota 2 The International (TI) from Liquipedia with stage-specific standings, results, and upcoming matches. Use for current TI status, Group Stage standings, Main Event results, or the next TI schedule; do not use for other tournaments or inactive TI editions. |
@@ -15,4 +16,4 @@
 
 ---
 
-*This document was automatically generated based on commit [`f62ff369f21eb33614b9e88881628a4b952b4f38`](https://github.com/highestop/nono/commit/f62ff369f21eb33614b9e88881628a4b952b4f38).*
+*This document was automatically generated based on commit [`e022ba8bb76e1d68250ed8a23c3dca7cb4c9e949`](https://github.com/highestop/nono/commit/e022ba8bb76e1d68250ed8a23c3dca7cb4c9e949).*
