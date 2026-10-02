@@ -1,4 +1,0 @@
-interface:
-  display_name: "Liquipedia TI Live Reporter"
-  short_description: "Report active TI results from Liquipedia"
-  default_prompt: "Use $liquipedia-ti-live-reporter to report the active TI results and upcoming schedule from Liquipedia."

@@ -1,5 +1,5 @@
 ---
-name: steam-market-price-reporter
+name: dota2-steam-market-price-reporter
 description: Query public Steam Community Market listings and report current lowest prices with optional volume-weighted historical medians in a compact table. Use for one or more exact market items, including Dota 2 cosmetics and RMB comparisons; do not use for private inventories, purchases, or claims about exact individual-sale minima.
 ---
 
@@ -21,7 +21,7 @@ Use Steam Community Market public pages and endpoints without signing in. Treat 
 Search for exact market names:
 
 ```bash
-python3 skills/steam-market-price-reporter/scripts/query_market.py \
+python3 skills/dota2-steam-market-price-reporter/scripts/query_market.py \
   --appid 570 \
   --search "Sullen Shrine" \
   --format markdown
@@ -30,7 +30,7 @@ python3 skills/steam-market-price-reporter/scripts/query_market.py \
 Query one or more exact items in RMB:
 
 ```bash
-python3 skills/steam-market-price-reporter/scripts/query_market.py \
+python3 skills/dota2-steam-market-price-reporter/scripts/query_market.py \
   --appid 570 \
   --item "Sullen Shrine" \
   --item "Golden Sullen Shrine" \
@@ -42,7 +42,7 @@ python3 skills/steam-market-price-reporter/scripts/query_market.py \
 Query current RMB prices without fetching history:
 
 ```bash
-python3 skills/steam-market-price-reporter/scripts/query_market.py \
+python3 skills/dota2-steam-market-price-reporter/scripts/query_market.py \
   --appid 570 \
   --item "Treasure of the Crimson Witness 2026" \
   --item "Aspect of Oscilla of the Crimson Witness" \

@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, timezone
 
 
 MARKET_BASE_URL = "https://steamcommunity.com/market"
-USER_AGENT = "Mozilla/5.0 (compatible; steam-market-price-reporter/1.0)"
+USER_AGENT = "Mozilla/5.0 (compatible; dota2-steam-market-price-reporter/1.0)"
 
 
 class SteamMarketError(RuntimeError):
