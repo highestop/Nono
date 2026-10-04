@@ -1,11 +1,13 @@
 ---
 name: code-committer
-description: Manage GitHub code changes from environment checks through conventional commits, push, pull-request creation and tracking, check or review remediation, and user-confirmed merge. Use when asked to commit or push changes, create or track a PR, address PR feedback, or merge a ready PR; never commit directly to main or merge without confirmation.
+description: Manage GitHub code changes from environment checks through conventional commits, push, pull-request creation and tracking, check or review remediation, and user-confirmed merge. Use for any task that changes files in a Git repository, including requests that only ask for edits; commit, push, and open or update a PR by default. Never commit directly to main or merge without confirmation.
 ---
 
 # Git commits
 
 Follow the steps strictly. Proceed to the next step only after completing or explicitly skipping the current step.
+
+For any task that changes files in any Git repository, complete the requested changes and verification, then immediately commit the task-related changes, push the feature branch, and open a PR for review, even if the user only asked for edits. If the branch already has a PR, push the new commit to that PR and provide its link. Do not include unrelated pre-existing changes. Honor an explicit request not to commit or open a PR. If committing, pushing, or creating a PR is blocked, preserve the changes and explain the blocker.
 
 ## Configuration
 

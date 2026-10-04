@@ -1,7 +1,7 @@
 - Language preferences: [@rules/language](/rules/language.md)
 - Behavior: [@rules/behavior](/rules/behavior.md)
 - Writing documentation: [@rules/format](/rules/format.md)
-- PR & commit: [@skills/code-committer](/skills/code-committer/SKILL.md)
+- PR & commit: For any task that changes files in any Git repository, use [@skills/code-committer](/skills/code-committer/SKILL.md) to commit, push, and open or update a PR by default, even when the request only asks for edits.
 - This repository is the contents of `~/.agents`; keep manifests, the lock, and scripts at its root, and skills directly under `skills/`.
 - External skills: [@skills.json](/skills.json) declares dependencies; [@skills-lock.json](/skills-lock.json) records installed revisions. Start agents through [@scripts/agent.sh](/scripts/agent.sh), or run [@scripts/update-skills.sh](/scripts/update-skills.sh) at session start when launching directly.
 - Treat external skills as generated dependencies. Keep custom skills in version control; apply upstream changes through the sync scripts. After an update, reload the changed skill at the next task boundary; restart the client if it does not detect the change.
