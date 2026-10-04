@@ -10,13 +10,13 @@ const args = process.argv.slice(2);
 if (args.includes('--help') || args.length === 0) {
   console.log(`Usage: node compose-poster.cjs --photo <file> --painting <file> --output <png>
   [--layout top-bottom|left-right] [--title-art <transparent-png>]
-  [--photo-fit cover|contain]
   [--photo-focus 0..1] [--painting-focus 0..1]
   [--title-width <pixels>] [--title-top <pixels>]
   [--title-x 0..1] [--title-color <hex>]
 
 Focus 0 crops from the top or left; 1 crops from the bottom or right.
-Defaults: layout=top-bottom, photo-fit=cover, photo-focus=0.5,
+Both panels fill their regions using proportional crops; no padding is added.
+Defaults: layout=top-bottom, photo-focus=0.5,
 painting-focus=1, title-color=#62717a. Title placement adjusts by layout.`);
   process.exit(0);
 }
@@ -48,29 +48,22 @@ async function orientedBuffer(file) {
   return sharp(file).rotate().toBuffer();
 }
 
-async function panel(file, targetWidth, targetHeight, fit, focus, grade) {
+async function panel(file, targetWidth, targetHeight, focus, grade) {
   const source = await orientedBuffer(file);
   const { width, height } = await sharp(source).metadata();
   let image = sharp(source);
-  let crop = null;
-
-  if (fit === 'cover') {
-    const targetRatio = targetWidth / targetHeight;
-    if (width / height < targetRatio) {
-      const cropHeight = Math.round(width / targetRatio);
-      const top = Math.round((height - cropHeight) * focus);
-      crop = { left: 0, top, width, height: cropHeight };
-    } else {
-      const cropWidth = Math.round(height * targetRatio);
-      const left = Math.round((width - cropWidth) * focus);
-      crop = { left, top: 0, width: cropWidth, height };
-    }
-    image = image.extract(crop).resize(targetWidth, targetHeight, { kernel: 'lanczos3' });
-  } else if (fit === 'contain') {
-    image = image.resize(targetWidth, targetHeight, { fit: 'contain', background: paper });
+  let crop;
+  const targetRatio = targetWidth / targetHeight;
+  if (width / height < targetRatio) {
+    const cropHeight = Math.round(width / targetRatio);
+    const top = Math.round((height - cropHeight) * focus);
+    crop = { left: 0, top, width, height: cropHeight };
   } else {
-    throw new Error(`Unsupported fit: ${fit}`);
+    const cropWidth = Math.round(height * targetRatio);
+    const left = Math.round((width - cropWidth) * focus);
+    crop = { left, top: 0, width: cropWidth, height };
   }
+  image = image.extract(crop).resize(targetWidth, targetHeight, { kernel: 'lanczos3' });
 
   if (grade) image = image.modulate({ saturation: 0.93, brightness: 1.01 });
   return { buffer: await image.png().toBuffer(), crop, sourceSize: [width, height] };
@@ -89,7 +82,9 @@ async function main() {
   const panelHeight = layout === 'left-right' ? side : half;
   const paintingLeft = layout === 'left-right' ? half : 0;
   const paintingTop = layout === 'left-right' ? 0 : half;
-  const photoFit = option('photo-fit', 'cover');
+  if (option('photo-fit', 'cover') !== 'cover') {
+    throw new Error('Both panels must fill their regions. Adjust --photo-focus instead of adding padding.');
+  }
   const photoFocus = numberOption('photo-focus', 0.5, 0, 1);
   const paintingFocus = numberOption('painting-focus', 1, 0, 1);
   const titleWidth = Math.round(numberOption('title-width', layout === 'left-right' ? 480 : 580, 100, 1500));
@@ -97,8 +92,8 @@ async function main() {
   const titleX = numberOption('title-x', layout === 'left-right' ? 0.37 : 0.5, 0, 1);
   const titleColor = option('title-color', '#62717a');
 
-  const photo = await panel(photoPath, panelWidth, panelHeight, photoFit, photoFocus, true);
-  const painting = await panel(paintingPath, panelWidth, panelHeight, 'cover', paintingFocus, false);
+  const photo = await panel(photoPath, panelWidth, panelHeight, photoFocus, true);
+  const painting = await panel(paintingPath, panelWidth, panelHeight, paintingFocus, false);
   const layers = [
     { input: photo.buffer, left: 0, top: 0 },
     { input: painting.buffer, left: paintingLeft, top: paintingTop },
