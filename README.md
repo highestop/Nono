@@ -27,6 +27,13 @@ Recommended setup:
   alias ws="cd ~/Workspace"
   ```
 
+## Source extraction skills
+
+- [extract-wechat](skills/extract-wechat/SKILL.md): extract WeChat Official Account content and selected original images.
+- [extract-xiaohongshu](skills/extract-xiaohongshu/SKILL.md): extract Xiaohongshu note content and selected original media.
+
+These skills return source content and selected media without creating Markdown archives.
+
 ## External skills
 
 The dependency list starts empty. Setup and update commands then succeed without network access or generated files; existing skills remain locally maintained.
