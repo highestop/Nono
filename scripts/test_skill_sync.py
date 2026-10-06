@@ -25,7 +25,7 @@ class SkillSyncTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         base = Path(self.temporary.name).resolve()
-        self.root = base / "home with spaces" / ".agents"
+        self.root = base / "home with spaces" / ".codex"
         self.root.mkdir(parents=True)
         self.source = base / "upstream"
         self.source.mkdir()
@@ -110,6 +110,26 @@ class SkillSyncTests(unittest.TestCase):
         self.assertEqual(self.lock_bytes(), original)
         self.assertFalse((self.root / ".cache").exists())
         self.assertFalse((self.root / ".agents").exists())
+
+    def test_codex_runtime_and_system_skills_stay_local(self):
+        runtime_paths = [
+            "auth.json", "config.toml", "state_5.sqlite", "state_5.sqlite-wal",
+            "sessions/example.jsonl", "plugins/cache/example.json",
+            "skills/.system/builtin/SKILL.md", "future-runtime/data.json",
+        ]
+        for relative in runtime_paths:
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("Disposable runtime fixture.\n")
+        custom = self.root / "skills/new-personal-skill/SKILL.md"
+        custom.parent.mkdir(parents=True)
+        custom.write_text("Shared personal skill.\n")
+        # A normal git add must include the shared skill and leave all runtime data out.
+        self.git(self.root, "add", ".")
+        staged = self.git(self.root, "diff", "--cached", "--name-only").splitlines()
+        self.assertEqual(staged, ["skills/new-personal-skill/SKILL.md"])
+        ignored = self.git(self.root, "check-ignore", *runtime_paths).splitlines()
+        self.assertEqual(set(ignored), set(runtime_paths))
 
     def test_selective_install_flat_layout_and_git_ignore(self):
         self.configure()

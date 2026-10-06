@@ -24,5 +24,6 @@
 !scripts
 !scripts/**
 
+/skills/.system/
 /skills/.gitignore
 __pycache__/

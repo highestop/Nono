@@ -15,7 +15,7 @@ Read preferences from the current request, project configuration, or global conf
 
 1. Current user request
 2. Project configuration: `.agents/config/code-committer.config.json`, `.claude/config/code-committer.config.json`
-3. Global configuration: `~/.agents/config/code-committer.config.json`, `~/.claude/config/code-committer.config.json`
+3. Global configuration: `~/.codex/config/code-committer.config.json`, `~/.claude/config/code-committer.config.json`
 4. Default values
 
 Supported fields:

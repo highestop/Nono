@@ -6,19 +6,20 @@ Personal agent instructions, rules, and reusable skills for Claude Code, Codex, 
 
 Recommended setup:
 
-- Clone this project as `~/.agents`. The checkout itself is the agent directory: `AGENTS.md`, `skills.json`, `skills-lock.json`, `scripts/`, and `skills/` live at its root. Do not create another `.agents/` inside it.
-- Use Python 3.9+ and Git on macOS or Linux. Connect each client's skill discovery to `~/.agents/skills`; Codex reads this location directly. Other clients may require their own skill-directory links or configuration.
-- For Codex global instructions, link `~/.codex/AGENTS.md` to `~/.agents/AGENTS.md` after preserving any existing instructions. Codex discovers global guidance through `~/.codex`; skill discovery through `~/.agents/skills` is separate. See the [official instruction discovery guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md). Create the link with `mkdir -p ~/.codex` and `ln -s ../.agents/AGENTS.md ~/.codex/AGENTS.md`, then start a new session. Keep shared preferences in this repository instead of duplicating them in client files.
-- In the directory where you usually keep projects, such as `~/Workspace`, create a `nono` symlink that points to `~/.agents` for quick access to the Git project.
+- Keep this checkout at `~/.codex`. The Git root contains `AGENTS.md`, `skills.json`, `skills-lock.json`, `scripts/`, and `skills/` alongside Codex's existing local state. When migrating an existing checkout, merge its files and `.git` into the existing directory; preserve local configuration, credentials, sessions, caches, databases, and built-in skills.
+- The root `.gitignore` tracks only Nono's shared files and explicitly excludes `skills/.system/`. Codex runtime data remains local, including new runtime paths outside the tracked allowlist. Do not force-add those files.
+- Use Python 3.9+ and Git on macOS or Linux. Keep personal skills directly in `~/.codex/skills`, where the installed Codex client discovers them. Connect other clients to that directory as needed. Project-scoped `.agents/skills` directories remain independent of this user-level layout.
+- Codex reads `~/.codex/AGENTS.md` directly as global guidance; no instruction symlink is needed. Keep shared preferences here so other clients can use the same file. See the [official instruction discovery guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+- In the directory where you usually keep projects, such as `~/Workspace`, create a `nono` symlink pointing to `~/.codex` for quick access to the Git project. The old user-level `~/.agents` directory is no longer needed.
 - If you use zsh, add commonly used agent and workspace shortcuts to `~/.zshrc`:
 
   ```zsh
   # claude
-  alias cc='~/.agents/scripts/agent.sh claude --dangerously-skip-permissions'
+  alias cc='~/.codex/scripts/agent.sh claude --dangerously-skip-permissions'
   alias ccu="npm i -g @anthropic-ai/claude-code@latest"
 
   # codex
-  alias cdx='~/.agents/scripts/agent.sh codex --sandbox danger-full-access --ask-for-approval never'
+  alias cdx='~/.codex/scripts/agent.sh codex --sandbox danger-full-access --ask-for-approval never'
   alias cdxu="npm i -g @openai/codex@latest"
 
   # zsh
@@ -56,21 +57,21 @@ Declare only the skills you want in [@skills.json](/skills.json). For example, a
 
 - Each key must match the skill's `name` in `SKILL.md`. Use `"path": "."` for a single-skill repository with `SKILL.md` at its root. Sources use Git URLs (with normal Git authentication) or absolute local Git paths.
 - `ref` selects a branch, tag, or commit. Updates follow that exact ref; tracking `main` follows new commits, while a fixed tag does not automatically advance to a new release.
-- A skill must be self-contained, including supporting files and license notices. Links outside its directory are rejected. An installed skill can be read through `~/.agents/skills/<name>`.
+- A skill must be self-contained, including supporting files and license notices. Links outside its directory are rejected. An installed skill can be read through `~/.codex/skills/<name>`.
 - [@skills-lock.json](/skills-lock.json) records the resolved commit and installed content hash. These are Nono's own manifest and lock formats; the scripts manage them without an npm dependency. Review and commit lock changes when you want to share updated revisions.
 
 ```bash
 # Restore missing skills from the lock; resolve new dependencies from their refs.
-~/.agents/scripts/setup-skills.sh
+~/.codex/scripts/setup-skills.sh
 
 # Install missing skills and update declared dependencies to their current refs.
-~/.agents/scripts/update-skills.sh
+~/.codex/scripts/update-skills.sh
 
 # Run a foreground updater, checking every 300 seconds until interrupted.
-~/.agents/scripts/update-skills.sh --watch --interval 300
+~/.codex/scripts/update-skills.sh --watch --interval 300
 
 # Sync before launch, then check every 300 seconds until the agent exits.
-~/.agents/scripts/agent.sh codex
+~/.codex/scripts/agent.sh codex
 ```
 
 The launcher preserves the agent's working directory, arguments, and exit status. Calling `codex` or `claude` directly bypasses the launcher; the aliases above opt into automatic synchronization. Nothing installs a system service or runs after the agent exits. This is polling, with up to one interval of delay, rather than a webhook subscription.
