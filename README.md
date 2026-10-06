@@ -8,6 +8,7 @@ Recommended setup:
 
 - Clone this project as `~/.agents`. The checkout itself is the agent directory: `AGENTS.md`, `skills.json`, `skills-lock.json`, `scripts/`, and `skills/` live at its root. Do not create another `.agents/` inside it.
 - Use Python 3.9+ and Git on macOS or Linux. Connect each client's skill discovery to `~/.agents/skills`; Codex reads this location directly. Other clients may require their own skill-directory links or configuration.
+- For Codex global instructions, link `~/.codex/AGENTS.md` to `~/.agents/AGENTS.md` after preserving any existing instructions. Codex discovers global guidance through `~/.codex`; skill discovery through `~/.agents/skills` is separate. See the [official instruction discovery guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md). Create the link with `mkdir -p ~/.codex` and `ln -s ../.agents/AGENTS.md ~/.codex/AGENTS.md`, then start a new session. Keep shared preferences in this repository instead of duplicating them in client files.
 - In the directory where you usually keep projects, such as `~/Workspace`, create a `nono` symlink that points to `~/.agents` for quick access to the Git project.
 - If you use zsh, add commonly used agent and workspace shortcuts to `~/.zshrc`:
 

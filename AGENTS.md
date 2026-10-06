@@ -2,6 +2,8 @@
 - Behavior: [@rules/behavior](/rules/behavior.md)
 - Writing documentation: [@rules/format](/rules/format.md)
 - PR & commit: For any task that changes files in any Git repository, use [@skills/code-committer](/skills/code-committer/SKILL.md) to commit, push, and open or update a PR by default, even when the request only asks for edits.
+- PR merge preference: Automatically merge pull requests created or updated for the user's requested work once required checks pass and no unresolved blocking review issues remain. The user has given standing authorization; do not ask for merge confirmation again unless they explicitly request manual approval for that task. Prefer rebase merge and delete the feature branch afterward.
+- Persistent user preferences: Store reusable preferences in this Nono repository (`~/.agents`) so agent clients share them; client-specific instruction files should only bridge to this guidance.
 - This repository is the contents of `~/.agents`; keep manifests, the lock, and scripts at its root, and skills directly under `skills/`.
 - External skills: [@skills.json](/skills.json) declares dependencies; [@skills-lock.json](/skills-lock.json) records installed revisions. Start agents through [@scripts/agent.sh](/scripts/agent.sh), or run [@scripts/update-skills.sh](/scripts/update-skills.sh) at session start when launching directly.
 - Treat external skills as generated dependencies. Keep custom skills in version control; apply upstream changes through the sync scripts. After an update, reload the changed skill at the next task boundary; restart the client if it does not detect the change.
