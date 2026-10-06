@@ -1,34 +1,41 @@
 #!/usr/bin/env node
-// Compose the approved 2048 px square layout from a real photo, a painted panel,
-// and an optional transparent title artwork. Requires Node.js and sharp.
-
+// Finish a source-ratio painting or a square photo/painting collage with sharp.
 const fs = require('node:fs');
 const path = require('node:path');
 const sharp = require('sharp');
-
 const args = process.argv.slice(2);
+
 if (args.includes('--help') || args.length === 0) {
   console.log(`Usage: node compose-poster.cjs --photo <file> --painting <file> --output <png>
-  [--layout top-bottom|left-right] [--title-art <transparent-png>]
-  [--photo-focus 0..1] [--painting-focus 0..1]
+  [--mode poster-only|collage] [--layout auto|top-bottom|left-right]
+  [--size <even-square-side>] [--title-art <transparent-png>]
+  [--photo-focus 0..1] [--painting-focus 0..1] [--grade-photo]
   [--title-width <pixels>] [--title-top <pixels>]
   [--title-x 0..1] [--title-color <hex>]
 
-Focus 0 crops from the top or left; 1 crops from the bottom or right.
-Both panels fill their regions using proportional crops; no padding is added.
-Defaults: layout=top-bottom, photo-focus=0.5,
-painting-focus=1, title-color=#62717a. Title placement adjusts by layout.`);
+Defaults: mode=collage, layout=auto, size=2048, focus=0.5.
+poster-only uses the photo's EXIF-oriented dimensions as its output size;
+the photo is a geometry reference only and is not placed in that output.
+collage chooses top/bottom for landscape or square photos, left/right for portraits.
+Photo is first; painting is second. Each fills exactly half with no padding.
+Focus 0 crops from top/left; 1 crops from bottom/right. No stretching.
+Titles are confined to the painted region. --title-top is relative to that region.
+Omit --title-art for an already titled painting. --grade-photo applies subtle grading.
+--size and --layout are collage-only; poster-only always preserves source geometry.`);
   process.exit(0);
 }
 
 function option(name, fallback) {
   const index = args.indexOf(`--${name}`);
-  return index === -1 ? fallback : args[index + 1];
+  if (index === -1) return fallback;
+  const value = args[index + 1];
+  if (!value || value.startsWith('--')) throw new Error(`Missing value for --${name}`);
+  return value;
 }
 
 function required(name) {
   const value = option(name);
-  if (!value || value.startsWith('--')) throw new Error(`Missing --${name}`);
+  if (!value) throw new Error(`Missing --${name}`);
   return value;
 }
 
@@ -40,93 +47,108 @@ function numberOption(name, fallback, min, max) {
   return value;
 }
 
-const side = 2048;
-const half = side / 2;
-const paper = '#f8f5ee';
-
-async function orientedBuffer(file) {
-  return sharp(file).rotate().toBuffer();
+async function orientedImage(file) {
+  const buffer = await sharp(file).rotate().png().toBuffer();
+  const { width, height } = await sharp(buffer).metadata();
+  return { buffer, width, height };
 }
 
-async function panel(file, targetWidth, targetHeight, focus, grade) {
-  const source = await orientedBuffer(file);
-  const { width, height } = await sharp(source).metadata();
-  let image = sharp(source);
+async function panel(source, width, height, focus, grade = false) {
+  const ratio = width / height;
   let crop;
-  const targetRatio = targetWidth / targetHeight;
-  if (width / height < targetRatio) {
-    const cropHeight = Math.round(width / targetRatio);
-    const top = Math.round((height - cropHeight) * focus);
-    crop = { left: 0, top, width, height: cropHeight };
+  if (source.width / source.height < ratio) {
+    const cropHeight = Math.max(1, Math.min(source.height, Math.round(source.width / ratio)));
+    crop = { left: 0, top: Math.round((source.height - cropHeight) * focus),
+      width: source.width, height: cropHeight };
   } else {
-    const cropWidth = Math.round(height * targetRatio);
-    const left = Math.round((width - cropWidth) * focus);
-    crop = { left, top: 0, width: cropWidth, height };
+    const cropWidth = Math.max(1, Math.min(source.width, Math.round(source.height * ratio)));
+    crop = { left: Math.round((source.width - cropWidth) * focus), top: 0,
+      width: cropWidth, height: source.height };
   }
-  image = image.extract(crop).resize(targetWidth, targetHeight, { kernel: 'lanczos3' });
+  let pipeline = sharp(source.buffer).extract(crop).resize(width, height, { kernel: 'lanczos3' });
+  if (grade) pipeline = pipeline.modulate({ saturation: 0.93, brightness: 1.01 });
+  return { buffer: await pipeline.png().toBuffer(), crop,
+    sourceSize: [source.width, source.height] };
+}
 
-  if (grade) image = image.modulate({ saturation: 0.93, brightness: 1.01 });
-  return { buffer: await image.png().toBuffer(), crop, sourceSize: [width, height] };
+async function titleLayer(file, region) {
+  const metadata = await sharp(file).metadata();
+  if (!metadata.hasAlpha) throw new Error('Title artwork must have genuine transparency');
+  const stats = await sharp(file).stats();
+  const alpha = stats.channels[stats.channels.length - 1];
+  if (alpha.min === 255 || alpha.max === 0) {
+    throw new Error('Title artwork needs both visible content and transparent pixels');
+  }
+  const width = Math.round(numberOption('title-width', region.width * 0.5, 1, region.width));
+  const top = Math.round(numberOption('title-top', region.height * 0.06, 0, region.height - 1));
+  const center = numberOption('title-x', 0.5, 0, 1);
+  const color = option('title-color', '#62717a');
+  // Fit long/multiline lettering inside the painted region, including its height.
+  const title = await sharp(file).trim().greyscale().tint(color)
+    .resize({ width, height: Math.max(1, region.height - top), fit: 'inside' })
+    .png().toBuffer({ resolveWithObject: true });
+  const left = Math.max(0, Math.min(region.width - title.info.width,
+    Math.round(region.width * center - title.info.width / 2)));
+  return { input: title.data, left: region.left + left, top: region.top + top };
 }
 
 async function main() {
   const photoPath = required('photo');
   const paintingPath = required('painting');
   const outputPath = required('output');
-  const titlePath = option('title-art');
-  const layout = option('layout', 'top-bottom');
-  if (!['top-bottom', 'left-right'].includes(layout)) {
-    throw new Error('--layout must be top-bottom or left-right');
+  const mode = option('mode', 'collage');
+  if (!['poster-only', 'collage'].includes(mode)) {
+    throw new Error('--mode must be poster-only or collage');
   }
-  const panelWidth = layout === 'left-right' ? half : side;
-  const panelHeight = layout === 'left-right' ? side : half;
-  const paintingLeft = layout === 'left-right' ? half : 0;
-  const paintingTop = layout === 'left-right' ? 0 : half;
+  if (mode === 'poster-only' && (args.includes('--size') || args.includes('--layout'))) {
+    throw new Error('--size and --layout are collage-only; poster-only preserves source geometry');
+  }
   if (option('photo-fit', 'cover') !== 'cover') {
-    throw new Error('Both panels must fill their regions. Adjust --photo-focus instead of adding padding.');
+    throw new Error('Panels must fill their regions; adjust focus instead of adding padding');
   }
   const photoFocus = numberOption('photo-focus', 0.5, 0, 1);
-  const paintingFocus = numberOption('painting-focus', 1, 0, 1);
-  const titleWidth = Math.round(numberOption('title-width', layout === 'left-right' ? 480 : 580, 100, 1500));
-  const titleTop = Math.round(numberOption('title-top', layout === 'left-right' ? 85 : 70, 0, 1000));
-  const titleX = numberOption('title-x', layout === 'left-right' ? 0.37 : 0.5, 0, 1);
-  const titleColor = option('title-color', '#62717a');
+  const paintingFocus = numberOption('painting-focus', 0.5, 0, 1);
+  const source = await orientedImage(photoPath);
+  const paintedSource = await orientedImage(paintingPath);
+  let width = source.width;
+  let height = source.height;
+  let layout = null;
+  let half = null;
+  let region = { width, height, left: 0, top: 0 };
+  const layers = [];
+  let photo = null;
 
-  const photo = await panel(photoPath, panelWidth, panelHeight, photoFocus, true);
-  const painting = await panel(paintingPath, panelWidth, panelHeight, paintingFocus, false);
-  const layers = [
-    { input: photo.buffer, left: 0, top: 0 },
-    { input: painting.buffer, left: paintingLeft, top: paintingTop },
-  ];
-
-  if (titlePath) {
-    const metadata = await sharp(titlePath).metadata();
-    if (!metadata.hasAlpha) throw new Error('Title artwork must have transparency');
-    const title = await sharp(titlePath)
-      .trim()
-      .greyscale()
-      .tint(titleColor)
-      .resize({ width: titleWidth })
-      .png()
-      .toBuffer({ resolveWithObject: true });
-    layers.push({
-      input: title.data,
-      left: paintingLeft + Math.floor(panelWidth * titleX - title.info.width / 2),
-      top: paintingTop + titleTop,
-    });
+  if (mode === 'collage') {
+    const side = numberOption('size', 2048, 2, 32768);
+    if (!Number.isInteger(side) || side % 2 !== 0) {
+      throw new Error('--size must be an even integer for an exact half split');
+    }
+    layout = option('layout', 'auto');
+    if (layout === 'auto') layout = source.width >= source.height ? 'top-bottom' : 'left-right';
+    if (!['top-bottom', 'left-right'].includes(layout)) {
+      throw new Error('--layout must be auto, top-bottom or left-right');
+    }
+    width = height = side;
+    half = side / 2;
+    region = layout === 'left-right'
+      ? { width: half, height: side, left: half, top: 0 }
+      : { width: side, height: half, left: 0, top: half };
+    photo = await panel(source, region.width, region.height, photoFocus, args.includes('--grade-photo'));
+    layers.push({ input: photo.buffer, left: 0, top: 0 });
   }
 
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  await sharp({ create: { width: side, height: side, channels: 3,
-    background: paper } })
-    .composite(layers)
-    .png({ compressionLevel: 9 })
-    .toFile(outputPath);
+  const painting = await panel(paintedSource, region.width, region.height, paintingFocus);
+  layers.push({ input: painting.buffer, left: region.left, top: region.top });
+  const titlePath = option('title-art');
+  if (titlePath) layers.push(await titleLayer(titlePath, region));
 
-  console.log(JSON.stringify({ outputPath, size: [side, side], layout,
-    splitAt: half, photo: { sourceSize: photo.sourceSize, crop: photo.crop },
-    painting: { sourceSize: painting.sourceSize, crop: painting.crop },
-    title: Boolean(titlePath) }));
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  await sharp({ create: { width, height, channels: 3, background: '#f8f5ee' } })
+    .composite(layers).png({ compressionLevel: 9 }).toFile(outputPath);
+  console.log(JSON.stringify({ outputPath, mode, size: [width, height],
+    sourceSize: [source.width, source.height], layout, splitAt: half, paintingRegion: region,
+    photo: photo && { sourceSize: photo.sourceSize, crop: photo.crop },
+    painting: { sourceSize: painting.sourceSize, crop: painting.crop }, title: Boolean(titlePath) }));
 }
 
-main().catch((error) => { console.error(error); process.exitCode = 1; });
+main().catch((error) => { console.error(error.message); process.exitCode = 1; });
