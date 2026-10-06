@@ -1,0 +1,4 @@
+interface:
+  display_name: "Extract WeChat"
+  short_description: "Extract WeChat content and selected original images"
+  default_prompt: "Use $extract-wechat to extract the requested content or original images from this WeChat article without archiving it."

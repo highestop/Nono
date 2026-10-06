@@ -1,0 +1,4 @@
+interface:
+  display_name: "Extract Xiaohongshu"
+  short_description: "Extract XHS content and selected original media"
+  default_prompt: "Use $extract-xiaohongshu to extract the requested content or original media from this Xiaohongshu note without archiving it."
