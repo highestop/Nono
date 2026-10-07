@@ -4,8 +4,6 @@
 
 !AGENTS.md
 !SKILLS.md
-!skills.json
-!skills-lock.json
 
 !README.md
 
@@ -21,9 +19,5 @@
 !rules
 !rules/**
 
-!scripts
-!scripts/**
-
 /skills/.system/
-/skills/.gitignore
 __pycache__/
