@@ -1,16 +1,15 @@
 ---
 name: code-committer
-description: Handle Git repository changes with verified commit identities, automatic agent co-authorship, conventional commits, and GitHub PR management. Use when editing files in a Git repository; ask whether to submit a PR unless the user has already authorized it for that workspace.
+description: Handle Git repository changes with verified commit identities, automatic agent co-authorship, conventional commits, and GitHub PR management. When a Git workspace has changes, automatically commit, push, and create or update a PR without asking whether to submit it.
 ---
 
 # Code committer
 
 ## Scope and authorization
 
-- Complete requested edits and relevant verification before asking whether to submit a PR. Include a concise change summary so the user can review the proposed work.
-- When `git status --short` shows modified, staged, deleted, or untracked files, ask whether to submit a PR before committing or pushing, unless the user has already authorized the workflow for this task or workspace. Existing changes also count, but do not assume they belong to the task. Do not ask when there are no changes or the user has already declined.
-- A request such as "automatically submit PRs in this workspace by default" applies only to that workspace. Honor it without asking again; do not change this skill, `AGENTS.md`, shared rules, or configuration files to record it, and do not carry it into other workspaces.
-- If the user declines a PR, preserve the edits. Commit or push separately only when requested. If a PR is authorized, commit, push, and create or update it.
+- Complete requested edits and relevant verification, then summarize the changes and proceed with the PR workflow.
+- When `git status --short` shows modified, staged, deleted, or untracked files, automatically commit the task-related changes, push, and create or update a PR. Do not ask whether to submit a PR, even when the user only requested edits. Do not bundle unrelated pre-existing changes, and skip the workflow when there are no changes.
+- Honor explicit requests not to commit, push, or submit a PR. Keep workspace-specific exceptions scoped to that workspace; do not record them in this skill, `AGENTS.md`, shared rules, or configuration files.
 - Use the user's instructions directly; do not read or write skill-specific configuration files.
 
 ## Inspect the repository and identity
@@ -26,7 +25,7 @@ description: Handle Git repository changes with verified commit identities, auto
 
 ## Commit and submit the PR
 
-- After authorization, stage only the intended files. Write English Angular Conventional Commit messages, adding a concise scope when useful. Append the inferred `Co-Authored-By` trailer after a blank line in the commit body.
+- After verification, stage only the intended files. Write English Angular Conventional Commit messages, adding a concise scope when useful. Append the inferred `Co-Authored-By` trailer after a blank line in the commit body.
 - Push the feature branch and manage PRs with `gh`. For a non-fast-forward rejection, fetch and rebase, resolve conflicts within the task's scope, then retry a normal push. Use `--force-with-lease` only when an intentional history rewrite requires it; never fall back to `--force` without explicit authorization.
 - Determine the PR target from `upstream` when present; otherwise use `gh repo view --json isFork,parent,nameWithOwner`. For a fork, push to the fork and open the PR against the original repository with `gh pr create --repo <upstream-owner>/<upstream-repo> --head <fork-owner>:<feature-branch>`.
 - Update the branch's existing PR when present; otherwise create one. Use an English Conventional Commit title and an English description covering the problem, resulting behavior, relevant validation, and related issues. State the preference for rebase merge and feature branch deletion. Keep inferred co-author trailers in commits.

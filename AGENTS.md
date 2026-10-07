@@ -1,4 +1,4 @@
 - Language preferences: see [@rules/language](/rules/language.md)
 - Behavior: see [@rules/behavior](/rules/behavior.md)
 - Content format: see [@rules/format](/rules/format.md)
-- Pull request & commit: see [@skills/code-committer](/skills/code-committer/SKILL.md) and follow its workspace-scoped PR authorization workflow.
+- Pull request & commit: see [@skills/code-committer](/skills/code-committer/SKILL.md).
