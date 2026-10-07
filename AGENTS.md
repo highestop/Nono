@@ -1,7 +1,7 @@
 - Language preferences: [@rules/language](/rules/language.md)
 - Behavior: [@rules/behavior](/rules/behavior.md)
 - Writing documentation: [@rules/format](/rules/format.md)
-- PR & commit: For any task that changes files in any Git repository, use [@skills/code-committer](/skills/code-committer/SKILL.md) to commit, push, and open or update a PR by default, even when the request only asks for edits.
+- PR & commit: For tasks that change files in a Git repository, use [@skills/code-committer](/skills/code-committer/SKILL.md) and follow its workspace-scoped PR authorization workflow.
 - PR merge preference: Automatically merge pull requests created or updated for the user's requested work once required checks pass and no unresolved blocking review issues remain. The user has given standing authorization; do not ask for merge confirmation again unless they explicitly request manual approval for that task. Prefer rebase merge and delete the feature branch afterward.
 - Persistent user preferences: Store reusable preferences in this Nono repository (`~/.codex`) so agent clients share them; Codex loads this global instruction file directly, and other clients can bridge to it.
 - This repository is the contents of `~/.codex`; keep manifests, the lock, and scripts at its root, and skills directly under `skills/`. Keep Codex local configuration, credentials, sessions, caches, databases, and built-in `skills/.system` outside version control.
