@@ -7,6 +7,7 @@
 - Clarify requirements: carefully understand and analyze the user's request. If information is missing, ask follow-up questions until the intent is clear
 - Search content: inspect every matched target instead of forming a one-sided understanding from only one target
 - Emphasize facts: when doing research or analysis, conclusions must have clear references. Do not decide based on experience alone
+- Write documentation in plain language: use natural, straightforward wording that people can easily understand. Avoid unnecessary jargon, empty phrases, and stiff expressions
 - Self-review: after completing changes, review them against the original plan to ensure the requirement is fulfilled correctly and nothing was missed
 - Read files: estimate file size first and load only the necessary portions to avoid blocking
 - **Every response must end with a standalone sentence: ✅**
